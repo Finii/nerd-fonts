@@ -61,10 +61,29 @@ jobs:
         run: |
           [[ "$RELEASE_TAG_VERSION" == *"-RC"* ]] && echo "::set-output name=val::true" || echo "::set-output name=val::false"
 
+      - name: Determine new or rerun
+        id: rel_new
+        run: |
+          [[ $(git show-ref --tags "$RELEASE_TAG_VERSION") ]] && echo "::set-output name=val::true" || echo "::set-output name=val::false"
+
+      - name: Run only on first trigger for release and always on release candidate
+        id: run
+        run: |
+          [[ ${{ rel_can.val == "true" || rel_new.val == "true" }} echo "::set-output name=val::true" || echo "::set-output name=val::false"
+
+      - name: Show outputs
+        run: |
+          echo "rel_version: ${{ steps.rel_ver.outputs.val }}"
+          echo "rel_candidate: ${{ steps.rel_can.outputs.val }}"
+          echo "rel_new: ${{ steps.rel_new.outputs.val }}"
+          echo "do_run: ${{ steps.run.outputs.val }}"
+
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       rel_version: ${{ steps.rel_ver.outputs.val }}
       rel_candidate: ${{ steps.rel_can.outputs.val }}
+      rel_new: ${{ steps.rel_new.outputs.val }}
+      do_run: ${{ steps.run.outputs.val }}
 
   # Workflow to build and install dependencies
   build:
@@ -90,6 +109,7 @@ jobs:
         run: |
           echo "$RELEASE_TAG_VERSION"
           echo "Candidate: $RELEASE_CANDIDATE"
+          echo "Publish/refresh release: ${{ needs.setup-fonts-matrix.outputs.do_run }}"
 
       # Install and setup Dependencies
       # @TODO cache the next 4 steps with actions/cache or upload
@@ -175,6 +195,7 @@ jobs:
 
       - name: Upload zip file archive for release
         uses: softprops/action-gh-release@v0.1.14
+        if: ${{ needs.setup-fonts-matrix.outputs.do_run == "true" }}
         with:
           prerelease: ${{ env.RELEASE_CANDIDATE != 'false' }}
           tag_name: ${{ env.RELEASE_TAG_VERSION }}
@@ -215,6 +236,7 @@ jobs:
 
       - name: Upload font-patcher archive for release
         uses: softprops/action-gh-release@v0.1.14
+        if: ${{ needs.setup-fonts-matrix.outputs.do_run == "true" }}
         with:
           prerelease: ${{ env.RELEASE_CANDIDATE != 'false' }}
           tag_name: ${{ env.RELEASE_TAG_VERSION }}
@@ -269,5 +291,6 @@ jobs:
 
       - name: Adjust release tag to include previous commit
         uses: EndBug/latest-tag@v1.5.0
+        if: ${{ needs.setup-fonts-matrix.outputs.do_run == "true" }}
         with:
           ref: ${{ needs.setup-fonts-matrix.outputs.rel_version }}
