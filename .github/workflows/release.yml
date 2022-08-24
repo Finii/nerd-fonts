@@ -69,7 +69,7 @@ jobs:
       - name: Run only on first trigger for release and always on release candidate
         id: run
         run: |
-          [[ ${{ rel_can.val == "true" || rel_new.val == "true" }} echo "::set-output name=val::true" || echo "::set-output name=val::false"
+          [[ "${{ steps.rel_can.outputs.val }}" == "true" || "${{ steps.rel_new.outputs.val }}" == "true" ]] && echo "::set-output name=val::true" || echo "::set-output name=val::false"
 
       - name: Show outputs
         run: |
@@ -195,7 +195,7 @@ jobs:
 
       - name: Upload zip file archive for release
         uses: softprops/action-gh-release@v0.1.14
-        if: ${{ needs.setup-fonts-matrix.outputs.do_run == "true" }}
+        if: needs.setup-fonts-matrix.outputs.do_run == 'true'
         with:
           prerelease: ${{ env.RELEASE_CANDIDATE != 'false' }}
           tag_name: ${{ env.RELEASE_TAG_VERSION }}
@@ -236,7 +236,7 @@ jobs:
 
       - name: Upload font-patcher archive for release
         uses: softprops/action-gh-release@v0.1.14
-        if: ${{ needs.setup-fonts-matrix.outputs.do_run == "true" }}
+        if: needs.setup-fonts-matrix.outputs.do_run == 'true'
         with:
           prerelease: ${{ env.RELEASE_CANDIDATE != 'false' }}
           tag_name: ${{ env.RELEASE_TAG_VERSION }}
@@ -291,6 +291,6 @@ jobs:
 
       - name: Adjust release tag to include previous commit
         uses: EndBug/latest-tag@v1.5.0
-        if: ${{ needs.setup-fonts-matrix.outputs.do_run == "true" }}
+        if: needs.setup-fonts-matrix.outputs.do_run == 'true'
         with:
           ref: ${{ needs.setup-fonts-matrix.outputs.rel_version }}
