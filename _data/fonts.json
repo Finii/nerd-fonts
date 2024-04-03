@@ -1,17 +1,30 @@
 {
   "fonts": [
     {
-      "unpatchedName": "0xProto",
+      "unpatchedName": "IBM 3270",
       "RFN": false,
-      "version": "1.603",
-      "patchedName": "0xProto",
-      "folderName": "0xProto",
-      "imagePreviewFont": "0xProto Nerd Font",
-      "imagePreviewFontSource": "0xProto/0xProto-Regular.ttf",
-      "linkPreviewFont": "oxproto",
-      "caskName": "0xproto",
-      "repoRelease": false,
-      "description": "An opinionated font for software engineers"
+      "version": "3.0.1",
+      "patchedName": "3270",
+      "folderName": "3270",
+      "imagePreviewFont": "3270 Nerd Font",
+      "imagePreviewFontSource": "3270/Regular/3270-Regular.ttf",
+      "linkPreviewFont": "font3270",
+      "caskName": "3270",
+      "repoRelease": true,
+      "description": "Derived from the x3270 font, a modern format of a font with high nostalgic value"
+    },
+    {
+      "unpatchedName": "Symbols Only",
+      "RFN": false,
+      "version": "latest",
+      "patchedName": "Symbols",
+      "folderName": "NerdFontsSymbolsOnly",
+      "imagePreviewFont": "Symbols2048Em Nerd Font Mono",
+      "imagePreviewFontSource": "NerdFontsSymbolsOnly/NerdFontsSymbolsNerdFontBlank.sfd",
+      "linkPreviewFont": false,
+      "caskName": "symbols-only",
+      "repoRelease": true,
+      "description": "Just the Nerd Font Icons. I.e Symbol font only"
     }
   ]
 }
