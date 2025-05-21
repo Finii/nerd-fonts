@@ -14,6 +14,21 @@
       "repoRelease": true,
       "isMonospaced": false,
       "description": "Metrically similar to Arial, pan-European WGL character set, sans serif"
+    },
+    {
+      "unpatchedName": "Symbols Only",
+      "licenseId": "MIT",
+      "RFN": false,
+      "version": "latest",
+      "patchedName": "Symbols",
+      "folderName": "NerdFontsSymbolsOnly",
+      "imagePreviewFont": "Symbols2048Em Nerd Font Mono",
+      "imagePreviewFontSource": "NerdFontsSymbolsOnly/NerdFontsSymbolsNerdFontBlank.sfd",
+      "linkPreviewFont": false,
+      "caskName": "symbols-only",
+      "repoRelease": true,
+      "isMonospaced": true,
+      "description": "Just the Nerd Font Icons. I.e Symbol font only"
     }
   ]
 }
