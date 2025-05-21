@@ -402,7 +402,7 @@ jobs:
         uses: EndBug/add-and-commit@v9
         if: steps.updated-or-not.outputs.updated != 0
         with:
-          fetch: false
+          fetch: true
           add: 'FontPatcher.zip'
           message: "[ci] Update FontPatcher.zip"
           committer_name: GitHub Actions
