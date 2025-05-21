@@ -242,41 +242,9 @@ jobs:
             patched-fonts/${{ matrix.font }}
             archives/SHA*
 
-  release-font-patcher:
-    name: Archive font patcher and add to release
-    needs: [ setup-fonts-matrix, build ]
-
-    env:
-      GITHUB_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      RELEASE_VERSION: ${{ needs.setup-fonts-matrix.outputs.rel_version }}
-      RELEASE_CANDIDATE: ${{ needs.setup-fonts-matrix.outputs.rel_candidate }}
-
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Bump version for source files
-        run: |
-          cd -- "$GITHUB_WORKSPACE/bin/scripts"
-          ./version-bump.sh "$RELEASE_VERSION"
-
-      - name: Archive font-patcher script for release
-        run: |
-          cd -- "$GITHUB_WORKSPACE/bin/scripts"
-          ./archive-font-patcher.sh
-
-      - name: Upload font-patcher archive for release
-        uses: softprops/action-gh-release@v2
-        if: needs.setup-fonts-matrix.outputs.rel_upload == 'true'
-        with:
-          draft: true
-          prerelease: ${{ env.RELEASE_CANDIDATE != 'false' }}
-          tag_name: "v${{ env.RELEASE_VERSION }}"
-          files: archives/*
-
   commit:
     name: Commit and push patched fonts to the repo, finalize release
-    needs: [ setup-fonts-matrix, build, release-font-patcher ]
+    needs: [ setup-fonts-matrix, build ]
     env:
       RELEASE_VERSION: ${{ needs.setup-fonts-matrix.outputs.rel_version }}
       RELEASE_CANDIDATE: ${{ needs.setup-fonts-matrix.outputs.rel_candidate }}
@@ -404,6 +372,41 @@ jobs:
           git-config-name: GitHub Actions
           git-config-email: 41898282+github-actions[bot]@users.noreply.github.com
           clean: false
+
+      - name: Archive font-patcher script in FontPatcher.zip for release
+        run: |
+          cd -- "$GITHUB_WORKSPACE/bin/scripts"
+          ./archive-font-patcher.sh
+
+      - name: Check if FontPatcher.zip contents changed
+        id: updated-or-not
+        run: |
+          sudo apt install -y -q zipcmp
+          (zipcmp archives/FontPatcher.zip ./FontPatcher.zip; \
+           echo "updated=$?" >> $GITHUB_OUTPUT) || true
+
+      - name: Upload font-patcher archive for release
+        uses: softprops/action-gh-release@v2
+        if: needs.setup-fonts-matrix.outputs.rel_upload == 'true'
+        with:
+          draft: true
+          prerelease: ${{ env.RELEASE_CANDIDATE != 'false' }}
+          tag_name: "v${{ env.RELEASE_VERSION }}"
+          files: archives/*
+
+      - name: Prepare commit
+        if: steps.updated-or-not.outputs.updated != 0
+        run: cp -f archives/FontPatcher.zip .
+
+      - name: Commit new FontPatcher.zip
+        uses: EndBug/add-and-commit@v9
+        if: steps.updated-or-not.outputs.updated != 0
+        with:
+          fetch: false
+          add: "FontPatcher.zip"
+          message: "[ci] Update FontPatcher.zip"
+          committer_name: GitHub Actions
+          committer_email: 41898282+github-actions[bot]@users.noreply.github.com
 
       - name: Adjust release tag to include previous commit
         uses: EndBug/latest-tag@v1
