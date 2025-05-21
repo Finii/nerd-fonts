@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Nerd Fonts Version: 3.4.0
+# Nerd Fonts Version: 3.4.3
 # calls the necessary scripts in the necessary order to prepare for a release
 #
 # This is not used for production
