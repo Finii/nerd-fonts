@@ -403,7 +403,7 @@ jobs:
         if: steps.updated-or-not.outputs.updated != 0
         with:
           fetch: false
-          add: "FontPatcher.zip"
+          add: 'FontPatcher.zip'
           message: "[ci] Update FontPatcher.zip"
           committer_name: GitHub Actions
           committer_email: 41898282+github-actions[bot]@users.noreply.github.com
